@@ -1,0 +1,72 @@
+package runner;
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.*;
+public class TestRunner extends Base{
+    public WebDriverHelper helper;
+    public ExtentReports report;
+    public ExtentTest test;
+    @BeforeMethod
+    public void setup() throws Exception{
+        openBrowser();
+        helper=new WebDriverHelper(driver);
+        report=Reporter.generateExtentReport("test1");
+    }
+
+    @Test(priority = 1)
+    public void testcase1()throws Exception{
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        WebElement hover=driver.findElement(By.xpath("//button[@aria-label='Explore our catalog']"));
+        Actions action=new Actions(driver);
+        action.moveToElement(hover).perform();
+        LoggerHandler.info("hover on explore");
+        test=report.createTest("test1");
+        test.log(Status.PASS, "hover on explore");
+        Screenshot.captureScreenShot("test1ss");
+    }
+    
+    @Test(priority = 2)
+    public void testcase2()throws Exception{
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        driver.navigate().to("https://www.coursera.org/about/cookies-manage");
+        Thread.sleep(3000);
+        WebElement btn=driver.findElement(By.xpath("//button[normalize-space()='Confirm My Choices']"));
+        btn.click();
+        WebElement login=driver.findElement(By.xpath("//a[normalize-space()='Log In']"));
+        login.click();
+        test=report.createTest("test3");
+        test.log(Status.INFO,"click on login");
+        LoggerHandler.info("click on login");
+        LoggerHandler.info("click on login");
+        LoggerHandler.info("click on login");
+        LoggerHandler.info("click on login");
+        LoggerHandler.info("click on login");
+        LoggerHandler.info("click on login");
+        WebElement sign=driver.findElement(By.xpath("//button[normalize-space()='Sign up']"));
+        sign.click();
+        Screenshot.captureScreenShot("coursera_screenshot");
+        Reporter.attachScreenshotToReport("coursera_screenshot",test,"ss");
+       
+    }
+    @AfterMethod
+    public void setClose(){
+        if(driver!=null){
+            driver.quit();
+        }
+        if(report!=null){
+            report.flush();
+        }
+    }
+}
